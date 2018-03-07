@@ -37,7 +37,7 @@ http {
 
     resolver 127.0.0.11;
 
-    set $gdl_frontend 'gdl-frontend.gdl-local:3000';
+    set $gdl_frontend 'gdl-frontend.gdl-local';
 
     location ~* ^/health$ {
         add_header 'Content-Length' 0;

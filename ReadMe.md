@@ -1,6 +1,6 @@
 # PROXY
 
-Nginx proxy for GDL
+Nginx proxy for GDL-frontend
 
 # Building and distribution
 

@@ -1,4 +1,4 @@
-FROM nginx:1.11.5
+FROM nginx:1.13-alpine
 
 # Delete examplefiles
 RUN rm /etc/nginx/conf.d/default.conf

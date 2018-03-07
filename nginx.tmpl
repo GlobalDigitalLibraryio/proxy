@@ -22,51 +22,22 @@ http {
   server {
     listen 80;
     charset UTF-8;
+
+    gzip on;
+    gzip_disable "msie6";
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.1;
+    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
     error_log /var/log/nginx/error.log debug;
     access_log /var/log/nginx/access.log;
 
     resolver 127.0.0.11;
 
-    set $images            'image-api.gdl-local';
-    set $api_gateway       'api-gateway.gdl-local';
-
-    location ~* ^/image-api/(v.*)/raw/(.*) {
-      set $s3_bucket        's3.eu-central-1.amazonaws.com/${GDL_ENVIRONMENT}.images.gdl';
-      set $url_image        'http://$images/image-api/$1/raw/$2$is_args$args';
-
-      if ($args = '') {
-        set $url_image      'https://$s3_bucket/$2?';
-      }
-
-      proxy_set_header       Referer    'gdl_proxy';
-      proxy_pass             $url_image;
-
-      proxy_cache image_cache;
-      proxy_cache_key "$proxy_host$uri$is_args$args";
-      proxy_cache_valid 30d;
-      proxy_cache_lock on;
-      proxy_cache_use_stale error invalid_header timeout updating;
-      proxy_http_version 1.1;
-      expires 30d;
-    }
-
-    location ~* ^/reading-materials-api/epub/(.*) {
-      set $s3_bucket        's3.eu-central-1.amazonaws.com/${GDL_ENVIRONMENT}.reading-materials.gdl';
-      set $url_epub         'https://$s3_bucket/epub/$1?';
-
-      proxy_set_header       Referer    'gdl_proxy';
-      proxy_pass             $url_epub;
-
-    }
-
-    location ~* ^/book-api/epub/(.*) {
-      set $s3_bucket        's3.eu-central-1.amazonaws.com/${GDL_ENVIRONMENT}.books.gdl';
-      set $url_epub         'https://$s3_bucket/epub/$1?';
-
-      proxy_set_header       Referer    'gdl_proxy';
-      proxy_pass             $url_epub;
-
-    }
+    set $gdl_frontend 'gdl-frontend.gdl-local:3000';
 
     location ~* ^/health$ {
         add_header 'Content-Length' 0;
@@ -78,7 +49,7 @@ http {
       proxy_set_header  X-Real-IP $remote_addr;
       proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header  Forwarded "for=$remote_addr;proto=$http_x_forwarded_proto";
-      proxy_pass http://$api_gateway;
+      proxy_pass http://$gdl_frontend;
     }
   }
 }

@@ -41,6 +41,17 @@ http {
 
     set $gdl_frontend 'gdl-frontend.gdl-local';
 
+    location ~* ^/sitemap/(.*) {
+      set $s3_bucket      's3.eu-central-1.amazonaws.com/sitemap.gdl';
+      set $sitemap_url    'https://$s3_bucket/$1?';
+
+      proxy_cache frontend_cache;
+      proxy_http_version 1.1;
+
+      proxy_set_header       Referer  'gdl_proxy';
+      proxy_pass             $sitemap_url;
+    }
+
     location ~* ^/health$ {
         add_header 'Content-Length' 0;
         return 200;

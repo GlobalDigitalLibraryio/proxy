@@ -41,7 +41,7 @@ http {
 
     set $gdl_frontend 'gdl-frontend.gdl-local';
 
-    location ~* ^/sitemap/(.*) {
+    location ~* ^/(sitemap.*) {
       set $s3_bucket      's3.eu-central-1.amazonaws.com/sitemap.gdl';
       set $sitemap_url    'https://$s3_bucket/$1?';
 

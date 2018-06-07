@@ -58,7 +58,7 @@ http {
         return 200;
     }
 
-    location ~ ^/admin(/.*) {
+    location ~ ^/admin(.*) {
       set $admin_url 'http://$admin_frontend$1?';
       proxy_set_header  Host $http_host;
       proxy_set_header  X-Real-IP $remote_addr;

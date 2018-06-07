@@ -40,6 +40,7 @@ http {
     resolver 127.0.0.11;
 
     set $gdl_frontend 'gdl-frontend.gdl-local';
+    set $admin_frontend 'admin-frontend.gdl-local';
 
     location ~* ^/(sitemap.*) {
       set $s3_bucket      's3.eu-central-1.amazonaws.com/sitemap.gdl';
@@ -64,6 +65,14 @@ http {
       proxy_set_header  Forwarded "for=$remote_addr;proto=$http_x_forwarded_proto";
       proxy_cache frontend_cache;
       proxy_pass http://$gdl_frontend;
+    }
+
+    location ~ /admin/.* {
+      proxy_set_header  Host $http_host;
+      proxy_set_header  X-Real-IP $remote_addr;
+      proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header  Forwarded "for=$remote_addr;proto=$http_x_forwarded_proto";
+      proxy_pass http://$admin_frontend;
     }
   }
 }

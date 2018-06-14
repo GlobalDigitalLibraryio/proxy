@@ -19,7 +19,6 @@ http {
   gzip_http_version 1.1;
   gzip_types text/plain text/css application/json application/javascript application/octet-stream text/xml application/xml application/xml+rss text/javascript;
 
-  proxy_cache_path /nginx_cache levels=1:2 keys_zone=frontend_cache:1M max_size=100M inactive=40d use_temp_path=off;
 
   # Port 79 brukes fra ELB port 80 for å hindre http (redirigere til https)
   server {
@@ -46,7 +45,6 @@ http {
       set $s3_bucket      's3.eu-central-1.amazonaws.com/sitemap.gdl';
       set $sitemap_url    'https://$s3_bucket/$1?';
 
-      proxy_cache frontend_cache;
       proxy_http_version 1.1;
 
       proxy_set_header       Referer  'gdl_proxy';
@@ -71,7 +69,6 @@ http {
       proxy_set_header  X-Real-IP $remote_addr;
       proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header  Forwarded "for=$remote_addr;proto=$http_x_forwarded_proto";
-      proxy_cache frontend_cache;
       proxy_pass http://$gdl_frontend;
     }
 

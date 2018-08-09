@@ -55,13 +55,23 @@ http {
         add_header 'Content-Length' 0;
         return 200;
     }
-
-    location ~ ^/admin/?(.*) {
+    
+    # For assets, we strip away the 'admin' part of the url
+    location ~ ^/admin/_next/(.+) {
       proxy_set_header  Host $http_host;
       proxy_set_header  X-Real-IP $remote_addr;
       proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header  Forwarded "for=$remote_addr;proto=$http_x_forwarded_proto";
-      proxy_pass http://$admin_frontend/$1$is_args$args;
+      proxy_pass http://$admin_frontend/_next/$1$is_args$args;
+    }
+
+    # For everything else admin, just pass on the request
+    location /admin {
+      proxy_set_header  Host $http_host;
+      proxy_set_header  X-Real-IP $remote_addr;
+      proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header  Forwarded "for=$remote_addr;proto=$http_x_forwarded_proto";
+      proxy_pass http://$admin_frontend;
     }
 
     location / {
